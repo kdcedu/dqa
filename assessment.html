@@ -128,7 +128,9 @@
             color: #666;
             cursor: pointer;
             transition: color 0.3s;
-            padding: 0.25rem;
+            padding: 0.5rem;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .rating-btn:hover {
@@ -463,6 +465,40 @@
             document.addEventListener('click', function(event) {
                 if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
                     sidebar.classList.remove('active');
+                }
+            });
+
+            // Add touch event handling for rating buttons
+            document.addEventListener('touchstart', function(e) {
+                const target = e.target;
+                if (target.classList.contains('rating-btn')) {
+                    e.preventDefault();
+                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
+                    const ratingButtons = target.parentNode.querySelectorAll('.rating-btn');
+                    ratingButtons.forEach((btn, index) => {
+                        btn.classList.toggle('active', index < level);
+                    });
+                }
+            }, { passive: false });
+
+            document.addEventListener('touchmove', function(e) {
+                const touch = e.touches[0];
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains('rating-btn')) {
+                    e.preventDefault();
+                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
+                    const ratingButtons = target.parentNode.querySelectorAll('.rating-btn');
+                    ratingButtons.forEach((btn, index) => {
+                        btn.classList.toggle('active', index < level);
+                    });
+                }
+            }, { passive: false });
+
+            document.addEventListener('touchend', function(e) {
+                const target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
+                if (target && target.classList.contains('rating-btn')) {
+                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
+                    submitAnswer(level);
                 }
             });
 
