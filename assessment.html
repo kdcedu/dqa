@@ -112,13 +112,13 @@
         }
 
         .rating {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, auto);
+            grid-template-rows: repeat(2, auto);
             justify-content: center;
             gap: 0.5rem;
             margin: 2rem 0;
             position: relative;
-            flex-direction: row-reverse;
         }
 
         .rating-btn {
@@ -131,21 +131,28 @@
             padding: 0.25rem;
         }
 
-        .rating:hover .rating-btn {
+        .rating-btn:hover {
+            color: #42b883;
+        }
+
+        .rating-btn:hover ~ .rating-btn {
             color: #666;
         }
 
-        .rating-btn:hover ~ .rating-btn,
-        .rating-btn:hover {
-            color: #42b883 !important;
+        .rating-btn:has(~ .rating-btn:hover) {
+            color: #42b883;
         }
 
-        .rating:hover .rating-btn:hover ~ .rating-btn,
-        .rating:hover .rating-btn:hover {
-            color: #42b883 !important;
-        }
-
+        /* Style for selected stars */
         .rating-btn.active {
+            color: #42b883;
+        }
+
+        .rating-btn.active ~ .rating-btn {
+            color: #666;
+        }
+
+        .rating-btn:has(~ .rating-btn.active) {
             color: #42b883;
         }
 
