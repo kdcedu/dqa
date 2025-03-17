@@ -113,10 +113,12 @@
 
         .rating {
             display: flex;
+            flex-wrap: wrap;
             justify-content: center;
             gap: 0.5rem;
             margin: 2rem 0;
             position: relative;
+            flex-direction: row-reverse;
         }
 
         .rating-btn {
@@ -133,13 +135,13 @@
             color: #666;
         }
 
-        .rating-btn:hover,
-        .rating-btn:hover ~ .rating-btn {
-            color: #666 !important;
+        .rating-btn:hover ~ .rating-btn,
+        .rating-btn:hover {
+            color: #42b883 !important;
         }
 
-        .rating:hover .rating-btn:hover,
-        .rating:hover .rating-btn:hover ~ .rating-btn {
+        .rating:hover .rating-btn:hover ~ .rating-btn,
+        .rating:hover .rating-btn:hover {
             color: #42b883 !important;
         }
 
@@ -387,8 +389,8 @@
                     <div class="description">
                         <p>${question.description}</p>
                     </div>
-                    <div class="rating" style="flex-direction: row-reverse;" data-high-level="Mức độ cao" data-low-level="Mức độ thấp">
-                        ${Array.from({length: 8}, (_, i) => 8 - i)
+                    <div class="rating" data-high-level="Mức độ cao" data-low-level="Mức độ thấp">
+                        ${Array.from({length: 8}, (_, i) => i + 1)
                             .map(level => `
                                 <button class="rating-btn ${selectedLevel >= level ? 'active' : ''}" onclick="submitAnswer(${level})">
                                     ★
