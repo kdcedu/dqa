@@ -1,457 +1,502 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đánh giá năng lực số - Assessment</title>
     <style>
-        :root {
-            font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-            line-height: 1.5;
-            font-weight: 400;
-            color-scheme: light dark;
-            color: rgba(255, 255, 255, 0.87);
-            background-color: #242424;
-        }
+      :root {
+        font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        font-weight: 400;
+        color-scheme: light dark;
+        color: rgba(255, 255, 255, 0.87);
+        background-color: #242424;
+      }
 
-        body {
-            margin: 0;
-            min-width: 320px;
-            min-height: 100vh;
-            background-color: #2c3e50;
-        }
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #2c3e50;
+      }
 
-        .app {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-        }
+      .app {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+      }
 
+      .sidebar {
+        width: 250px;
+        background-color: #ffffff;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .menu-item {
+        color: #243342;
+        text-decoration: none;
+        padding: 0.8rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .menu-item:hover {
+        background-color: rgba(36, 51, 66, 0.1);
+      }
+
+      .menu-item.active {
+        background-color: #ffa07a;
+        color: #ffffff;
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 250px;
+        padding: 2rem;
+      }
+
+      .assessment {
+        max-width: 100%;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+
+      .content-frame {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: clamp(1rem, 5vw, 4rem);
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+        box-sizing: border-box;
+        text-align: center;
+      }
+
+      .content-frame h1,
+      .content-frame h2 {
+        text-align: center;
+      }
+
+      .question-container {
+        margin-top: 2rem;
+        text-align: center;
+      }
+
+      .description {
+        padding: 0.5rem 0;
+        text-align: justify;
+        font-size: 0.45em;
+      }
+
+      .description:first-of-type {
+        font-size: 1.25em;
+      }
+
+      .description:last-of-type {
+        font-size: 1.9em;
+      }
+
+      .rating {
+        display: grid;
+        grid-template-columns: repeat(8, auto);
+        grid-template-rows: 1fr;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 2rem 0;
+        position: relative;
+      }
+
+      @media (max-width: 768px) {
+        .rating {
+          grid-template-columns: repeat(4, auto);
+          grid-template-rows: repeat(2, auto);
+        }
+      }
+
+      .rating-btn {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: color 0.3s;
+        padding: 0 0.5rem;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+
+      .rating-btn:hover {
+        color: #42b883;
+      }
+
+      .rating-btn:hover ~ .rating-btn {
+        color: #666;
+      }
+
+      .rating-btn:has(~ .rating-btn:hover) {
+        color: #42b883;
+      }
+
+      /* Style for selected stars */
+      .rating-btn.active {
+        color: #42b883;
+      }
+
+      .rating-btn.active ~ .rating-btn {
+        color: #666;
+      }
+
+      .rating-btn:has(~ .rating-btn.active) {
+        color: #42b883;
+      }
+
+      .rating::before,
+      .rating::after {
+        content: attr(data-low-level);
+        position: absolute;
+        bottom: -50px;
+        font-size: 0.9rem;
+        color: #ffffff;
+      }
+
+      .rating::before {
+        right: 0;
+        content: attr(data-high-level);
+        color: #ffffff;
+      }
+
+      .rating::after {
+        left: 0;
+        color: #ffffff;
+      }
+
+      .name-input {
+        margin-top: 2rem;
+        text-align: center;
+        width: 100%;
+        padding: 0 1rem;
+        box-sizing: border-box;
+      }
+
+      .name-input input {
+        padding: 0.8rem;
+        font-size: 1rem;
+        border-radius: 4px;
+        border: 1px solid #666;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        width: 100%;
+        max-width: 300px;
+        margin-bottom: 1rem;
+        box-sizing: border-box;
+      }
+
+      .submit-btn {
+        background-color: #42b883;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .submit-btn:hover {
+        background-color: #3aa876;
+      }
+
+      .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        padding: 0.5rem;
+        background-color: #243342;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar-toggle:hover {
+        background-color: #2c3e50;
+      }
+
+      .menu-icon {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+      }
+
+      p {
+        margin: 0;
+      }
+
+      @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            background-color: #ffffff;
-            padding: 20px;
-            height: 100vh;
-            position: fixed;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 999;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .menu-item {
-            color: #243342;
-            text-decoration: none;
-            padding: 0.8rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(36, 51, 66, 0.1);
-        }
-
-        .menu-item.active {
-            background-color: #FFA07A;
-            color: #ffffff;
+        .sidebar.active {
+          transform: translateX(0);
         }
 
         .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
+          margin-left: 0;
+          padding: 5rem 0.5rem;
         }
 
-        .assessment {
-            max-width: 100%;
-            margin: 0 auto;
-            padding: 1rem;
+        .sidebar-toggle {
+          display: block;
         }
 
         .content-frame {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: clamp(1rem, 3vw, 2rem);
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-            box-sizing: border-box;
-            text-align: center;
-        }
-
-        .content-frame h1,
-        .content-frame h2 {
-            text-align: center;
-        }
-
-        .question-container {
-            margin-top: 2rem;
-            text-align: center;
-        }
-
-        .description {
-            margin: 2rem 0;
-            white-space: pre-line;
-            text-align: justify;
-            font-size: 0.45em;
-        }
-
-        .description:first-of-type {
-            font-size: 1.25em;
-        }
-
-        .description:last-of-type {
-            font-size: 1.9em;
+          padding: 1rem;
+          max-width: calc(100% - 2rem);
         }
 
         .rating {
-            display: grid;
-            grid-template-columns: repeat(4, auto);
-            grid-template-rows: repeat(2, auto);
-            justify-content: center;
-            gap: 0.5rem;
-            margin: 2rem 0;
-            position: relative;
-        }
-
-        .rating-btn {
-            background: none;
-            border: none;
-            font-size: 1.8rem;
-            color: #666;
-            cursor: pointer;
-            transition: color 0.3s;
-            padding: 0.5rem;
-            -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
-        }
-
-        .rating-btn:hover {
-            color: #42b883;
-        }
-
-        .rating-btn:hover ~ .rating-btn {
-            color: #666;
-        }
-
-        .rating-btn:has(~ .rating-btn:hover) {
-            color: #42b883;
-        }
-
-        /* Style for selected stars */
-        .rating-btn.active {
-            color: #42b883;
-        }
-
-        .rating-btn.active ~ .rating-btn {
-            color: #666;
-        }
-
-        .rating-btn:has(~ .rating-btn.active) {
-            color: #42b883;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          margin: 3rem 0;
+          justify-content: space-around;
         }
 
         .rating::before,
         .rating::after {
-            content: attr(data-low-level);
-            position: absolute;
-            bottom: -25px;
-            font-size: 0.9rem;
-            color: #ffffff;
+          font-size: 0.9rem;
+          bottom: -30px;
         }
 
-        .rating::before {
-            right: 0;
-            content: attr(data-high-level);
-            color: #ffffff;
+        .description {
+          font-size: 1rem;
+          margin: 1.5rem 0;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .assessment {
+          padding: 0.5rem;
         }
 
-        .rating::after {
-            left: 0;
-            color: #ffffff;
+        .content-frame {
+          padding: 0.8rem;
+        }
+
+        .rating {
+          margin: 2.5rem 0;
+        }
+
+        .rating-btn {
+          padding: 0.18rem;
+          font-size: 1.6rem;
         }
 
         .name-input {
-            margin-top: 2rem;
-            text-align: center;
-            width: 100%;
-            padding: 0 1rem;
-            box-sizing: border-box;
+          padding: 0;
         }
 
         .name-input input {
-            padding: 0.8rem;
-            font-size: 1rem;
-            border-radius: 4px;
-            border: 1px solid #666;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            width: 100%;
-            max-width: 300px;
-            margin-bottom: 1rem;
-            box-sizing: border-box;
+          max-width: 100%;
+        }
+
+        .name-input input {
+          padding: 0.6rem;
+          font-size: 0.9rem;
+          max-width: 100%;
         }
 
         .submit-btn {
-            background-color: #42b883;
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+          width: 100%;
+          padding: 0.8rem;
+          font-size: 1rem;
         }
-
-        .submit-btn:hover {
-            background-color: #3aa876;
-        }
-
-        .sidebar-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1000;
-            width: 40px;
-            height: 40px;
-            padding: 0.5rem;
-            background-color: #243342;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar-toggle:hover {
-            background-color: #2c3e50;
-        }
-
-        .menu-icon {
-            width: 24px;
-            height: 24px;
-            filter: brightness(0) invert(1);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-                z-index: 999;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-                padding: 1rem;
-            }
-
-            .sidebar-toggle {
-                display: block;
-            }
-
-            .content-frame {
-                padding: 1rem;
-                max-width: calc(100% - 2rem);
-            }
-
-            .rating {
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                margin: 3rem 0;
-                justify-content: space-around;
-            }
-
-            .rating::before,
-            .rating::after {
-                font-size: 0.9rem;
-                bottom: -30px;
-            }
-
-            .description {
-                font-size: 1rem;
-                margin: 1.5rem 0;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .assessment {
-                padding: 0.5rem;
-            }
-
-            .content-frame {
-                padding: 0.8rem;
-            }
-
-            .rating {
-                margin: 2.5rem 0;
-            }
-
-            .rating-btn {
-                padding: 0.18rem;
-                font-size: 1.6rem;
-            }
-
-            .name-input {
-                padding: 0;
-            }
-
-            .name-input input {
-                max-width: 100%;
-            }
-
-            .name-input input {
-                padding: 0.6rem;
-                font-size: 0.9rem;
-                max-width: 100%;
-            }
-
-            .submit-btn {
-                width: 100%;
-                padding: 0.8rem;
-                font-size: 1rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app">
-        <button class="sidebar-toggle">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-        </button>
-        <div class="sidebar">
-            <div class="logo">
-                <img src="https://i.postimg.cc/fbMznPHH/logokdc.jpg" alt="Logo" style="width: 100%; max-width: 150px; height: auto;" />
-            </div>
-            <nav class="menu">
-                <a href="index.html" class="menu-item">Trang chủ</a>
-                <a href="assessment.html" class="menu-item active">Đánh giá</a>
-                <a href="results.html" class="menu-item">Kết quả</a>
-            </nav>
+      <button class="sidebar-toggle">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="menu-icon"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <div class="sidebar">
+        <div class="logo">
+          <img
+            src="https://i.postimg.cc/fbMznPHH/logokdc.jpg"
+            alt="Logo"
+            style="width: 100%; max-width: 150px; height: auto"
+          />
         </div>
+        <nav class="menu">
+          <a href="index.html" class="menu-item">Trang chủ</a>
+          <a href="assessment.html" class="menu-item active">Đánh giá</a>
+          <a href="results.html" class="menu-item">Kết quả</a>
+        </nav>
+      </div>
 
-        <main class="main-content">
-            <div class="assessment">
-                <div class="content-frame" id="assessmentContent">
-                    <!-- Content will be dynamically inserted here -->
-                </div>
-            </div>
-        </main>
+      <main class="main-content">
+        <div class="assessment">
+          <div class="content-frame" id="assessmentContent">
+            <!-- Content will be dynamically inserted here -->
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        const questions = [
-            {
-                id: 1,
-                title: 'TÌM KIẾM THÔNG TIN',
-                description: 'Duyệt, tìm kiếm và lọc dữ liệu, thông tin và nội dung số.\nXác định được các nhu cầu thông tin; tìm kiếm dữ liệu, thông tin và nội dung trong môi trường số; truy cập và điều hướng giữa chúng. Tạo và cập nhật các chiến lược tìm kiếm cá nhân.'
-            },
-            {
-                id: 2,
-                title: 'ĐÁNH GIÁ THÔNG TIN',
-                description: 'Đánh giá dữ liệu, thông tin và nội dung số.\nPhân tích, so sánh và phê bình tính đáng tin cậy và độ tin cậy của các nguồn dữ liệu, thông tin và nội dung số. Phân tích, diễn giải và phê bình dữ liệu, thông tin và nội dung số.'
-            },
-            {
-                id: 3,
-                title: 'QUẢN LÝ DỮ LIỆU',
-                description: 'Quản lý dữ liệu, thông tin và nội dung số.\nTổ chức, lưu trữ và truy xuất dữ liệu, thông tin và nội dung trong môi trường số. Tổ chức và xử lý chúng trong một môi trường có cấu trúc.'
-            },
-            {
-                id: 4,
-                title: 'GIAO TIẾP',
-                description: 'Tương tác thông qua công nghệ số.\nTương tác thông qua nhiều loại công nghệ số và hiểu các phương tiện giao tiếp kỹ thuật số phù hợp cho một bối cảnh nhất định.'
-            },
-            {
-                id: 5,
-                title: 'CHIA SẺ',
-                description: 'Chia sẻ thông tin và nội dung thông qua công nghệ số.\nChia sẻ dữ liệu, thông tin và nội dung số với người khác thông qua các công nghệ số thích hợp. Hoạt động như một trung gian, biết về thực hành trích dẫn và quy nguồn.'
-            },
-            {
-                id: 6,
-                title: 'HỢP TÁC',
-                description: 'Hợp tác thông qua công nghệ số.\nSử dụng các công cụ và công nghệ số cho các quy trình hợp tác, và để đồng xây dựng và đồng sáng tạo dữ liệu, tài nguyên và kiến thức.'
-            },
-            {
-                id: 7,
-                title: 'PHÁT TRIỂN NỘI DUNG',
-                description: 'Phát triển nội dung số.\nTạo và chỉnh sửa nội dung số ở các định dạng khác nhau, thể hiện bản thân thông qua các phương tiện kỹ thuật số.'
-            },
-            {
-                id: 8,
-                title: 'TINH CHỈNH NỘI DUNG',
-                description: 'Tích hợp và tạo lập lại nội dung số.\nSửa đổi, tinh chỉnh và tích hợp thông tin và nội dung mới vào một kho kiến thức và tài nguyên hiện có để tạo ra nội dung và kiến thức mới, độc đáo và phù hợp.'
-            },
-            {
-                id: 9,
-                title: 'BẢN QUYỀN',
-                description: 'Thực thi bản quyền và giấy phép.\nHiểu cách bản quyền và giấy phép áp dụng cho thông tin và nội dung số.'
-            },
-            {
-                id: 10,
-                title: 'BẢO VỆ',
-                description: 'Bảo vệ thiết bị.\nBảo vệ thiết bị và nội dung số, và hiểu các rủi ro và mối đe dọa trong môi trường số. Biết về các biện pháp an toàn và bảo mật và có quan tâm đến độ tin cậy và quyền riêng tư.'
-            },
-            {
-                id: 11,
-                title: 'BẢO MẬT',
-                description: 'Bảo vệ dữ liệu cá nhân và quyền riêng tư.\nBảo vệ dữ liệu cá nhân và quyền riêng tư trong môi trường số. Hiểu cách sử dụng và chia sẻ thông tin nhận dạng cá nhân trong khi có thể tự bảo vệ mình và người khác khỏi bị thiệt hại. Hiểu rằng các dịch vụ số sử dụng "Chính sách quyền riêng tư" để thông báo cách dữ liệu cá nhân được sử dụng.'
-            },
-            {
-                id: 12,
-                title: 'CÂN BẰNG',
-                description: 'Bảo vệ sức khỏe và an sinh số.\nCó thể tránh các rủi ro sức khỏe và các mối đe dọa đối với thể chất và tâm lý khi sử dụng công nghệ số. Có khả năng bảo vệ bản thân và những người khác khỏi các mối nguy hiểm có thể xảy ra trong môi trường số.'
-            },
-            {
-                id: 13,
-                title: 'XÁC ĐỊNH VẤN ĐỀ',
-                description: 'Xác định nhu cầu và giải pháp công nghệ.\nĐánh giá nhu cầu và xác định, đánh giá, lựa chọn và sử dụng các công cụ số và các giải pháp công nghệ khả thi để giải quyết chúng. Điều chỉnh và tùy chỉnh môi trường số cho phù hợp với nhu cầu cá nhân.'
-            },
-            {
-                id: 14,
-                title: 'GIẢI QUYẾT VẤN ĐỀ',
-                description: 'Giải quyết các vấn đề kỹ thuật.\nXác định các vấn đề kỹ thuật khi vận hành thiết bị và sử dụng môi trường số, và giải quyết chúng, từ xử lý sự cố đến giải quyết các vấn đề phức tạp hơn.'
-            },
-            {
-                id: 15,
-                title: 'SỬ DỤNG CÔNG CỤ',
-                description: 'Sử dụng sáng tạo công nghệ số.\nSử dụng các công cụ và công nghệ số để tạo ra kiến thức và đổi mới các quy trình và sản phẩm. Tham gia, riêng lẻ hoặc tập thể, vào quá trình xử lý nhận thức để hiểu và giải quyết các vấn đề khái niệm và các tình huống vấn đề trong môi trường số.'
-            },
-            {
-                id: 16,
-                title: 'HIỂU VỀ AI',
-                description: 'Hiểu biết về AI, trong đó có Gen AI.\nHiểu được cách AI ảnh hưởng đến cuộc sống hằng ngày và vai trò của AI trong các lĩnh vực khác nhau. Nắm vững được nguyên tắc hoạt động của AI, khả năng và hạn chế của AI.'
-            },
-            {
-                id: 17,
-                title: 'SỬ DỤNG AI',
-                description: 'Sử dụng AI có đạo đức và trách nhiệm.\nSử dụng hiệu quả các hệ thống AI và hiểu rõ ứng dụng thực tế của chúng. Sử dụng được AI để tạo nội dung, khám phá kiến thức và giải quyết các vấn đề trong công việc, học tập và cuộc sống hằng ngày.'
-            },
-            {
-                id: 18,
-                title: 'ĐÁNH GIÁ AI',
-                description: 'Đánh giá các công cụ AI.\nĐánh giá và lọc thông tin từ các nguồn được tạo ra hoặc xử lý bằng AI, để hiểu rõ hơn về tính đáng tin cậy và cách sử dụng thông tin đó. Đánh giá AI trên các khía cạnh minh bạch, an toàn, đạo đức và tác động.'
-            }
-        ];
+      const questions = [
+        {
+          id: 1,
+          title: "TÌM KIẾM THÔNG TIN",
+          description:
+            "Duyệt, tìm kiếm và lọc dữ liệu, thông tin và nội dung số.\nXác định được các nhu cầu thông tin; tìm kiếm dữ liệu, thông tin và nội dung trong môi trường số; truy cập và điều hướng giữa chúng. Tạo và cập nhật các chiến lược tìm kiếm cá nhân.",
+        },
+        {
+          id: 2,
+          title: "ĐÁNH GIÁ THÔNG TIN",
+          description:
+            "Đánh giá dữ liệu, thông tin và nội dung số.\nPhân tích, so sánh và phê bình tính đáng tin cậy và độ tin cậy của các nguồn dữ liệu, thông tin và nội dung số. Phân tích, diễn giải và phê bình dữ liệu, thông tin và nội dung số.",
+        },
+        {
+          id: 3,
+          title: "QUẢN LÝ DỮ LIỆU",
+          description:
+            "Quản lý dữ liệu, thông tin và nội dung số.\nTổ chức, lưu trữ và truy xuất dữ liệu, thông tin và nội dung trong môi trường số. Tổ chức và xử lý chúng trong một môi trường có cấu trúc.",
+        },
+        {
+          id: 4,
+          title: "GIAO TIẾP",
+          description:
+            "Tương tác thông qua công nghệ số.\nTương tác thông qua nhiều loại công nghệ số và hiểu các phương tiện giao tiếp kỹ thuật số phù hợp cho một bối cảnh nhất định.",
+        },
+        {
+          id: 5,
+          title: "CHIA SẺ",
+          description:
+            "Chia sẻ thông tin và nội dung thông qua công nghệ số.\nChia sẻ dữ liệu, thông tin và nội dung số với người khác thông qua các công nghệ số thích hợp. Hoạt động như một trung gian, biết về thực hành trích dẫn và quy nguồn.",
+        },
+        {
+          id: 6,
+          title: "HỢP TÁC",
+          description:
+            "Hợp tác thông qua công nghệ số.\nSử dụng các công cụ và công nghệ số cho các quy trình hợp tác, và để đồng xây dựng và đồng sáng tạo dữ liệu, tài nguyên và kiến thức.",
+        },
+        {
+          id: 7,
+          title: "PHÁT TRIỂN NỘI DUNG",
+          description:
+            "Phát triển nội dung số.\nTạo và chỉnh sửa nội dung số ở các định dạng khác nhau, thể hiện bản thân thông qua các phương tiện kỹ thuật số.",
+        },
+        {
+          id: 8,
+          title: "TINH CHỈNH NỘI DUNG",
+          description:
+            "Tích hợp và tạo lập lại nội dung số.\nSửa đổi, tinh chỉnh và tích hợp thông tin và nội dung mới vào một kho kiến thức và tài nguyên hiện có để tạo ra nội dung và kiến thức mới, độc đáo và phù hợp.",
+        },
+        {
+          id: 9,
+          title: "BẢN QUYỀN",
+          description:
+            "Thực thi bản quyền và giấy phép.\nHiểu cách bản quyền và giấy phép áp dụng cho thông tin và nội dung số.",
+        },
+        {
+          id: 10,
+          title: "BẢO VỆ",
+          description:
+            "Bảo vệ thiết bị.\nBảo vệ thiết bị và nội dung số, và hiểu các rủi ro và mối đe dọa trong môi trường số. Biết về các biện pháp an toàn và bảo mật và có quan tâm đến độ tin cậy và quyền riêng tư.",
+        },
+        {
+          id: 11,
+          title: "BẢO MẬT",
+          description:
+            'Bảo vệ dữ liệu cá nhân và quyền riêng tư.\nBảo vệ dữ liệu cá nhân và quyền riêng tư trong môi trường số. Hiểu cách sử dụng và chia sẻ thông tin nhận dạng cá nhân trong khi có thể tự bảo vệ mình và người khác khỏi bị thiệt hại. Hiểu rằng các dịch vụ số sử dụng "Chính sách quyền riêng tư" để thông báo cách dữ liệu cá nhân được sử dụng.',
+        },
+        {
+          id: 12,
+          title: "CÂN BẰNG",
+          description:
+            "Bảo vệ sức khỏe và an sinh số.\nCó thể tránh các rủi ro sức khỏe và các mối đe dọa đối với thể chất và tâm lý khi sử dụng công nghệ số. Có khả năng bảo vệ bản thân và những người khác khỏi các mối nguy hiểm có thể xảy ra trong môi trường số.",
+        },
+        {
+          id: 13,
+          title: "XÁC ĐỊNH VẤN ĐỀ",
+          description:
+            "Xác định nhu cầu và giải pháp công nghệ.\nĐánh giá nhu cầu và xác định, đánh giá, lựa chọn và sử dụng các công cụ số và các giải pháp công nghệ khả thi để giải quyết chúng. Điều chỉnh và tùy chỉnh môi trường số cho phù hợp với nhu cầu cá nhân.",
+        },
+        {
+          id: 14,
+          title: "GIẢI QUYẾT VẤN ĐỀ",
+          description:
+            "Giải quyết các vấn đề kỹ thuật.\nXác định các vấn đề kỹ thuật khi vận hành thiết bị và sử dụng môi trường số, và giải quyết chúng, từ xử lý sự cố đến giải quyết các vấn đề phức tạp hơn.",
+        },
+        {
+          id: 15,
+          title: "SỬ DỤNG CÔNG CỤ",
+          description:
+            "Sử dụng sáng tạo công nghệ số.\nSử dụng các công cụ và công nghệ số để tạo ra kiến thức và đổi mới các quy trình và sản phẩm. Tham gia, riêng lẻ hoặc tập thể, vào quá trình xử lý nhận thức để hiểu và giải quyết các vấn đề khái niệm và các tình huống vấn đề trong môi trường số.",
+        },
+        {
+          id: 16,
+          title: "HIỂU VỀ AI",
+          description:
+            "Hiểu biết về AI, trong đó có Gen AI.\nHiểu được cách AI ảnh hưởng đến cuộc sống hằng ngày và vai trò của AI trong các lĩnh vực khác nhau. Nắm vững được nguyên tắc hoạt động của AI, khả năng và hạn chế của AI.",
+        },
+        {
+          id: 17,
+          title: "SỬ DỤNG AI",
+          description:
+            "Sử dụng AI có đạo đức và trách nhiệm.\nSử dụng hiệu quả các hệ thống AI và hiểu rõ ứng dụng thực tế của chúng. Sử dụng được AI để tạo nội dung, khám phá kiến thức và giải quyết các vấn đề trong công việc, học tập và cuộc sống hằng ngày.",
+        },
+        {
+          id: 18,
+          title: "ĐÁNH GIÁ AI",
+          description:
+            "Đánh giá các công cụ AI.\nĐánh giá và lọc thông tin từ các nguồn được tạo ra hoặc xử lý bằng AI, để hiểu rõ hơn về tính đáng tin cậy và cách sử dụng thông tin đó. Đánh giá AI trên các khía cạnh minh bạch, an toàn, đạo đức và tác động.",
+        },
+      ];
 
-        let currentQuestion = 0;
-        let answers = [];
-        let selectedLevel = 0;
+      let currentQuestion = 0;
+      let answers = [];
+      let selectedLevel = 0;
 
-        function renderQuestion() {
-            const question = questions[currentQuestion];
-            const content = document.getElementById('assessmentContent');
+      function renderQuestion() {
+        const question = questions[currentQuestion];
+        const content = document.getElementById("assessmentContent");
 
-            content.innerHTML = `
+        content.innerHTML = `
                 <h1>${question.title}</h1>
                 <div class="question-container">
                     <h2>Đọc mô tả và chọn mức độ thành thạo năng lực phù hợp nhất</h2>
@@ -459,111 +504,142 @@
                         <p>${question.description}</p>
                     </div>
                     <div class="rating" data-high-level="Mức độ cao" data-low-level="Mức độ thấp">
-                        ${Array.from({length: 8}, (_, i) => i + 1)
-                            .map(level => `
-                                <button class="rating-btn ${selectedLevel >= level ? 'active' : ''}" onclick="submitAnswer(${level})">
+                        ${Array.from({ length: 8 }, (_, i) => i + 1)
+                          .map(
+                            (level) => `
+                                <button class="rating-btn ${
+                                  selectedLevel >= level ? "active" : ""
+                                }" onclick="submitAnswer(${level})">
                                     ★
                                 </button>
-                            `).join('')}
+                            `
+                          )
+                          .join("")}
                     </div>
                 </div>
             `;
-        }
+      }
 
-        function renderNameInput() {
-            const content = document.getElementById('assessmentContent');
-            content.innerHTML = `
+      function renderNameInput() {
+        const content = document.getElementById("assessmentContent");
+        content.innerHTML = `
                 <h1>Hoàn thành đánh giá</h1>
                 <div class="name-input">
                     <input type="text" id="userName" placeholder="Nhập tên của bạn" />
                     <button class="submit-btn" onclick="submitAssessment()">Xem kết quả</button>
                 </div>
             `;
-        }
+      }
 
-        function submitAnswer(level) {
-            selectedLevel = level;
-            answers.push({
-                questionId: questions[currentQuestion].id,
-                level: parseFloat(level)
-            });
-
-            if (currentQuestion < questions.length - 1) {
-                currentQuestion++;
-                selectedLevel = 0;
-                renderQuestion();
-            } else {
-                renderNameInput();
-            }
-        }
-
-        function submitAssessment() {
-            const userName = document.getElementById('userName').value.trim();
-            if (!userName) return;
-
-            const queryParams = new URLSearchParams({
-                answers: JSON.stringify(answers),
-                name: userName,
-                date: new Date().toISOString()
-            });
-
-            window.location.href = `results.html?${queryParams.toString()}`;
-        }
-
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'sidebar-toggle';
-            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
-            document.body.appendChild(toggleButton);
-
-            toggleButton.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
-
-            document.addEventListener('click', function(event) {
-                if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
-                    sidebar.classList.remove('active');
-                }
-            });
-
-            // Add touch event handling for rating buttons
-            document.addEventListener('touchstart', function(e) {
-                const target = e.target;
-                if (target.classList.contains('rating-btn')) {
-                    e.preventDefault();
-                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
-                    const ratingButtons = target.parentNode.querySelectorAll('.rating-btn');
-                    ratingButtons.forEach((btn, index) => {
-                        btn.classList.toggle('active', index < level);
-                    });
-                }
-            }, { passive: false });
-
-            document.addEventListener('touchmove', function(e) {
-                const touch = e.touches[0];
-                const target = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (target && target.classList.contains('rating-btn')) {
-                    e.preventDefault();
-                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
-                    const ratingButtons = target.parentNode.querySelectorAll('.rating-btn');
-                    ratingButtons.forEach((btn, index) => {
-                        btn.classList.toggle('active', index < level);
-                    });
-                }
-            }, { passive: false });
-
-            document.addEventListener('touchend', function(e) {
-                const target = document.elementFromPoint(e.changedTouches[0].clientX, e.changedTouches[0].clientY);
-                if (target && target.classList.contains('rating-btn')) {
-                    const level = parseInt(Array.from(target.parentNode.children).indexOf(target) + 1);
-                    submitAnswer(level);
-                }
-            });
-
-            renderQuestion();
+      function submitAnswer(level) {
+        selectedLevel = level;
+        answers.push({
+          questionId: questions[currentQuestion].id,
+          level: parseFloat(level),
         });
+
+        if (currentQuestion < questions.length - 1) {
+          currentQuestion++;
+          selectedLevel = 0;
+          renderQuestion();
+        } else {
+          renderNameInput();
+        }
+      }
+
+      function submitAssessment() {
+        const userName = document.getElementById("userName").value.trim();
+        if (!userName) return;
+
+        const queryParams = new URLSearchParams({
+          answers: JSON.stringify(answers),
+          name: userName,
+          date: new Date().toISOString(),
+        });
+
+        window.location.href = `results.html?${queryParams.toString()}`;
+      }
+
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.querySelector(".sidebar");
+        const toggleButton = document.createElement("button");
+        toggleButton.className = "sidebar-toggle";
+        toggleButton.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
+        document.body.appendChild(toggleButton);
+
+        toggleButton.addEventListener("click", function () {
+          sidebar.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (event) {
+          if (
+            !sidebar.contains(event.target) &&
+            !toggleButton.contains(event.target)
+          ) {
+            sidebar.classList.remove("active");
+          }
+        });
+
+        // Add touch event handling for rating buttons
+        document.addEventListener(
+          "touchstart",
+          function (e) {
+            const target = e.target;
+            if (target.classList.contains("rating-btn")) {
+              e.preventDefault();
+              const level = parseInt(
+                Array.from(target.parentNode.children).indexOf(target) + 1
+              );
+              const ratingButtons =
+                target.parentNode.querySelectorAll(".rating-btn");
+              ratingButtons.forEach((btn, index) => {
+                btn.classList.toggle("active", index < level);
+              });
+            }
+          },
+          { passive: false }
+        );
+
+        document.addEventListener(
+          "touchmove",
+          function (e) {
+            const touch = e.touches[0];
+            const target = document.elementFromPoint(
+              touch.clientX,
+              touch.clientY
+            );
+            if (target && target.classList.contains("rating-btn")) {
+              e.preventDefault();
+              const level = parseInt(
+                Array.from(target.parentNode.children).indexOf(target) + 1
+              );
+              const ratingButtons =
+                target.parentNode.querySelectorAll(".rating-btn");
+              ratingButtons.forEach((btn, index) => {
+                btn.classList.toggle("active", index < level);
+              });
+            }
+          },
+          { passive: false }
+        );
+
+        document.addEventListener("touchend", function (e) {
+          const target = document.elementFromPoint(
+            e.changedTouches[0].clientX,
+            e.changedTouches[0].clientY
+          );
+          if (target && target.classList.contains("rating-btn")) {
+            const level = parseInt(
+              Array.from(target.parentNode.children).indexOf(target) + 1
+            );
+            submitAnswer(level);
+          }
+        });
+
+        renderQuestion();
+      });
     </script>
-</body>
+  </body>
 </html>
