@@ -1,330 +1,398 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đánh giá năng lực số - Results</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        :root {
-            font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-            line-height: 1.5;
-            font-weight: 400;
-            color-scheme: light dark;
-            color: rgba(255, 255, 255, 0.87);
-            background-color: #242424;
-        }
+      :root {
+        font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        font-weight: 400;
+        color-scheme: light dark;
+        color: rgba(255, 255, 255, 0.87);
+        background-color: #242424;
+      }
 
-        body {
-            margin: 0;
-            min-width: 320px;
-            min-height: 100vh;
-            background-color: #2c3e50;
-        }
+      body {
+        margin: 0;
+        min-width: 320px;
+        min-height: 100vh;
+        background-color: #2c3e50;
+      }
 
-        .app {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-        }
+      canvas {
+        width: 600px;
+        height: 600px;
+      }
 
+      .app {
+        display: flex;
+        min-height: 100vh;
+        position: relative;
+      }
+
+      .sidebar {
+        width: 250px;
+        background-color: #ffffff;
+        padding: 20px;
+        height: 100vh;
+        position: fixed;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .menu {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .menu-item {
+        color: #243342;
+        text-decoration: none;
+        padding: 0.8rem 1rem;
+        border-radius: 4px;
+        transition: background-color 0.3s;
+      }
+
+      .menu-item:hover {
+        background-color: rgba(36, 51, 66, 0.1);
+      }
+
+      .menu-item.active {
+        background-color: #ffa07a;
+        color: #ffffff;
+      }
+
+      .main-content {
+        flex: 1;
+        margin-left: 250px;
+        padding: 2rem;
+      }
+
+      .results {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+      }
+
+      .content-frame {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: clamp(1.5rem, 4vw, 3rem);
+        width: 100%;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      .report-header {
+        margin-bottom: 2rem;
+      }
+
+      .report-meta {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1rem;
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .meta-label {
+        font-size: 0.9rem;
+        color: #888;
+      }
+
+      .meta-value {
+        font-size: 1.1rem;
+        font-weight: 500;
+      }
+
+      .results-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .result-card {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 1.5rem;
+      }
+
+      .score-display {
+        margin: 1rem 0;
+      }
+
+      .score {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #42b883;
+        margin-bottom: 0.5rem;
+      }
+
+      .score-bar {
+        height: 8px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+
+      .score-fill {
+        height: 100%;
+        background-color: #42b883;
+        transition: width 0.5s ease;
+      }
+
+      .feedback {
+        margin-top: 1rem;
+        font-size: 1rem;
+        color: #ddd;
+      }
+
+      .restart-btn {
+        background-color: #42b883;
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        font-size: 1.2rem;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-top: 2rem;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .restart-btn:hover {
+        background-color: #3aa876;
+      }
+
+      .sidebar-toggle {
+        display: none;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
+        z-index: 1000;
+        width: 40px;
+        height: 40px;
+        padding: 0.5rem;
+        background-color: #243342;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      .sidebar-toggle:hover {
+        background-color: #2c3e50;
+      }
+
+      .menu-icon {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+      }
+
+      @media (max-width: 768px) {
         .sidebar {
-            width: 250px;
-            background-color: #ffffff;
-            padding: 20px;
-            height: 100vh;
-            position: fixed;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
         }
 
-        .logo {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .menu {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .menu-item {
-            color: #243342;
-            text-decoration: none;
-            padding: 0.8rem 1rem;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .menu-item:hover {
-            background-color: rgba(36, 51, 66, 0.1);
-        }
-
-        .menu-item.active {
-            background-color: #FFA07A;
-            color: #ffffff;
+        .sidebar.active {
+          transform: translateX(0);
         }
 
         .main-content {
-            flex: 1;
-            margin-left: 250px;
-            padding: 2rem;
-        }
-
-        .results {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .content-frame {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: clamp(1.5rem, 4vw, 3rem);
-            width: 100%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .report-header {
-            margin-bottom: 2rem;
-        }
-
-        .report-meta {
-            display: flex;
-            gap: 2rem;
-            margin-top: 1rem;
-        }
-
-        .meta-item {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .meta-label {
-            font-size: 0.9rem;
-            color: #888;
-        }
-
-        .meta-value {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        .results-container {
-            display: flex;
-            flex-direction: column;
-            gap: 2rem;
-        }
-
-        .result-card {
-            background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 1.5rem;
-        }
-
-        .score-display {
-            margin: 1rem 0;
-        }
-
-        .score {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #42b883;
-            margin-bottom: 0.5rem;
-        }
-
-        .score-bar {
-            height: 8px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .score-fill {
-            height: 100%;
-            background-color: #42b883;
-            transition: width 0.5s ease;
-        }
-
-        .feedback {
-            margin-top: 1rem;
-            font-size: 1rem;
-            color: #ddd;
-        }
-
-        .restart-btn {
-            background-color: #42b883;
-            color: white;
-            border: none;
-            padding: 1rem 2rem;
-            font-size: 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 2rem;
-            display: block;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .restart-btn:hover {
-            background-color: #3aa876;
+          margin-left: 0;
         }
 
         .sidebar-toggle {
-            display: none;
-            position: fixed;
-            top: 1rem;
-            left: 1rem;
-            z-index: 1000;
-            width: 40px;
-            height: 40px;
-            padding: 0.5rem;
-            background-color: #243342;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+          display: block;
         }
 
-        .sidebar-toggle:hover {
-            background-color: #2c3e50;
+        .report-meta {
+          flex-direction: column;
+          gap: 1rem;
         }
-
-        .menu-icon {
-            width: 24px;
-            height: 24px;
-            filter: brightness(0) invert(1);
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-
-            .sidebar.active {
-                transform: translateX(0);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .sidebar-toggle {
-                display: block;
-            }
-
-            .report-meta {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="app">
-        <div class="sidebar">
-            <div class="logo">
-                <img src="https://i.postimg.cc/fbMznPHH/logokdc.jpg" alt="Logo" style="width: 100%; max-width: 150px; height: auto;" />
-            </div>
-            <nav class="menu">
-                <a href="index.html" class="menu-item">Trang chủ</a>
-                <a href="assessment.html" class="menu-item">Đánh giá</a>
-                <a href="results.html" class="menu-item active">Kết quả</a>
-            </nav>
+      <div class="sidebar">
+        <div class="logo">
+          <img
+            src="https://i.postimg.cc/fbMznPHH/logokdc.jpg"
+            alt="Logo"
+            style="width: 100%; max-width: 150px; height: auto"
+          />
         </div>
+        <nav class="menu">
+          <a href="index.html" class="menu-item">Trang chủ</a>
+          <a href="assessment.html" class="menu-item">Đánh giá</a>
+          <a href="results.html" class="menu-item active">Kết quả</a>
+        </nav>
+      </div>
 
-        <main class="main-content">
-            <div class="results">
-                <div class="content-frame" id="resultsContent">
-                    <!-- Content will be dynamically inserted here -->
-                </div>
-            </div>
-        </main>
+      <main class="main-content">
+        <div class="results">
+          <div
+            style="
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <canvas id="myChart"></canvas>
+          </div>
+          <div class="content-frame" id="resultsContent">
+            <!-- Content will be dynamically inserted here -->
+          </div>
+        </div>
+      </main>
     </div>
 
     <script>
-        const competencyAreas = [
-            {
-                id: 'literacy',
-                name: 'Khai thác dữ liệu và thông tin',
-                questions: [1, 2, 3]
-            },
-            {
-                id: 'communication',
-                name: 'Giao tiếp và hợp tác trong môi trường số',
-                questions: [4, 5, 6]
-            },
-            {
-                id: 'creativity',
-                name: 'Sáng tạo nội dung số',
-                questions: [7, 8, 9]
-            },
-            {
-                id: 'safety',
-                name: 'An toàn',
-                questions: [10, 11, 12]
-            },
-            {
-                id: 'probsolving',
-                name: 'Giải quyết vấn đề',
-                questions: [13, 14, 15]
-            },
-            {
-                id: 'ai',
-                name: 'Trí tuệ nhân tạo',
-                questions: [16, 17, 18]
-            }
-        ];
+      const competencyAreas = [
+        {
+          id: "literacy",
+          name: "Khai thác dữ liệu và thông tin",
+          questions: [1, 2, 3],
+          detail: [
+            "Tìm kiếm thông tin",
+            "Đánh giá thông tin",
+            "Quản lý dữ liệu",
+          ],
+        },
+        {
+          id: "communication",
+          name: "Giao tiếp và hợp tác trong môi trường số",
+          questions: [4, 5, 6],
+          detail: ["Giao tiếp", "Chia sẻ", "Hợp tác"],
+        },
+        {
+          id: "creativity",
+          name: "Sáng tạo nội dung số",
+          questions: [7, 8, 9],
+          detail: ["Phát triển nội dung", "Tinh chỉnh nội dung", "Bản quyền"],
+        },
+        {
+          id: "safety",
+          name: "An toàn",
+          questions: [10, 11, 12],
+          detail: ["Bảo vệ", "Bảo mật", "Cân bằng"],
+        },
+        {
+          id: "probsolving",
+          name: "Giải quyết vấn đề",
+          questions: [13, 14, 15],
+          detail: ["Xác định vấn đề", "Giải quyết vấn đề", "Sử dụng công cụ"],
+        },
+        {
+          id: "ai",
+          name: "Trí tuệ nhân tạo",
+          questions: [16, 17, 18],
+          detail: ["Hiểu về AI", "Hiểu AI", "Đánh giá AI"],
+        },
+      ];
 
-        function getFeedback(percentage) {
-            if (percentage <= 12.5) return 'Ở trình độ cơ bản, có thể làm được khi có hướng dẫn chi tiết.';
-            if (percentage <= 25) return 'Ở trình độ cơ bản, có thể tự chủ thao tác hoặc hướng dẫn khi cần.';
-            if (percentage <= 37.5) return 'Có thể tự thực hiện với những vấn đề cơ bản.';
-            if (percentage <= 50) return 'Có thể tự thực hiện dựa trên nhu cầu cá nhân và các vấn đề được xác định rõ ràng.';
-            if (percentage <= 62.5) return 'Có thể tự thực hiện và hướng dẫn cho người khác giải quyết vấn đề cơ bản.';
-            if (percentage <= 75) return 'Ở trình độ nâng cao, có thể tự thực hiện hoặc hướng dẫn người khác giải quyết vấn đề phức tạp.';
-            if (percentage <= 87.5) return 'Ở trình độ chuyên sâu, có thể tự tạo ra giải pháp cho các vấn đề phức tạp.';
-            return 'Ở trình độ chuyên sâu cao nhất, có thể đề xuất những ý tưởng, giải pháp mới để giải quyết vấn đề phức tạp.';
-        }
+      function getFeedback(percentage) {
+        if (percentage <= 12.5)
+          return "Ở trình độ cơ bản, có thể làm được khi có hướng dẫn chi tiết.";
+        if (percentage <= 25)
+          return "Ở trình độ cơ bản, có thể tự chủ thao tác hoặc hướng dẫn khi cần.";
+        if (percentage <= 37.5)
+          return "Có thể tự thực hiện với những vấn đề cơ bản.";
+        if (percentage <= 50)
+          return "Có thể tự thực hiện dựa trên nhu cầu cá nhân và các vấn đề được xác định rõ ràng.";
+        if (percentage <= 62.5)
+          return "Có thể tự thực hiện và hướng dẫn cho người khác giải quyết vấn đề cơ bản.";
+        if (percentage <= 75)
+          return "Ở trình độ nâng cao, có thể tự thực hiện hoặc hướng dẫn người khác giải quyết vấn đề phức tạp.";
+        if (percentage <= 87.5)
+          return "Ở trình độ chuyên sâu, có thể tự tạo ra giải pháp cho các vấn đề phức tạp.";
+        return "Ở trình độ chuyên sâu cao nhất, có thể đề xuất những ý tưởng, giải pháp mới để giải quyết vấn đề phức tạp.";
+      }
 
-        function processResults(answers) {
-            return competencyAreas.map(area => {
-                const areaAnswers = area.questions.map(qId => {
-                    const answer = answers.find(a => a.questionId === qId);
-                    return answer ? Number(answer.level) : 0;
-                });
+      function processResults(answers) {
+        return competencyAreas.map((area) => {
+          const areaAnswers = area.questions.map((qId) => {
+            const answer = answers.find((a) => a.questionId === qId);
+            return answer ? Number(answer.level) : 0;
+          });
 
-                if (areaAnswers.every(score => score === 0)) return {
-                    area: area.name,
-                    percentage: 0,
-                    score: '0.0',
-                    feedback: getFeedback(0)
-                };
+          if (areaAnswers.every((score) => score === 0))
+            return {
+              area: area.name,
+              percentage: 0,
+              score: "0.0",
+              feedback: getFeedback(0),
+            };
 
-                const average = areaAnswers.reduce((sum, score) => sum + score, 0) / 3;
-                const percentage = Math.round((average / 8) * 100);
-                const displayScore = percentage + '%';
+          const average =
+            areaAnswers.reduce((sum, score) => sum + score, 0) / 3;
+          const percentage = Math.round((average / 8) * 100);
+          const displayScore = percentage + "%";
 
-                return {
-                    area: area.name,
-                    percentage,
-                    score: displayScore,
-                    feedback: getFeedback(percentage)
-                };
-            });
-        }
+          return {
+            area: area.name,
+            percentage,
+            score: displayScore,
+            feedback: getFeedback(percentage),
+          };
+        });
+      }
 
-        function renderResults() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const answers = JSON.parse(urlParams.get('answers') || '[]');
-            const userName = urlParams.get('name') || 'Anonymous';
-            const date = new Date(urlParams.get('date'));
-            const assessmentDate = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
-            const results = processResults(answers);
+      function processDetailResults(answers) {
+        return competencyAreas.map((area) => {
+          const areaAnswers = area.questions.map((qId) => {
+            const answer = answers.find((a) => a.questionId === qId);
+            return answer ? Number(answer.level) : 0;
+          });
 
-            const content = document.getElementById('resultsContent');
-            content.innerHTML = `
+          if (areaAnswers.every((score) => score === 0))
+            return {
+              area: area.name,
+              percentage: 0,
+              score: "0.0",
+              feedback: getFeedback(0),
+            };
+
+          return {
+            area: area.name,
+            percentage: areaAnswers.map((score) => (score / 8) * 100),
+            detail: area.detail,
+          };
+        });
+      }
+
+      function renderResults() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const answers = JSON.parse(urlParams.get("answers") || "[]");
+        const userName = urlParams.get("name") || "Anonymous";
+        const date = new Date(urlParams.get("date"));
+        const assessmentDate = `${date
+          .getDate()
+          .toString()
+          .padStart(2, "0")}/${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}/${date.getFullYear()}`;
+        const results = processResults(answers);
+
+        const content = document.getElementById("resultsContent");
+        content.innerHTML = `
                 <div class="report-header">
                     <h1>Các Miền Năng Lực Số</h1>
                     <div class="report-meta">
@@ -340,7 +408,9 @@
                 </div>
 
                 <div class="results-container">
-                    ${results.map(result => `
+                    ${results
+                      .map(
+                        (result) => `
                         <div class="result-card">
                             <h2>${result.area}</h2>
                             <div class="score-display">
@@ -351,33 +421,114 @@
                             </div>
                             <p class="feedback">${result.feedback}</p>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join("")}
                 </div>
 
                 <button class="restart-btn" onclick="window.location.href='index.html'">Làm Lại</button>
             `;
-        }
+      }
 
-        // Mobile menu toggle
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'sidebar-toggle';
-            toggleButton.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
-            document.body.appendChild(toggleButton);
+      function renderChart() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const answers = JSON.parse(urlParams.get("answers") || "[]");
+        const detailResults = processDetailResults(answers);
 
-            toggleButton.addEventListener('click', function() {
-                sidebar.classList.toggle('active');
-            });
+        console.log(detailResults.flatMap((result) => result.detail));
 
-            document.addEventListener('click', function(event) {
-                if (!sidebar.contains(event.target) && !toggleButton.contains(event.target)) {
-                    sidebar.classList.remove('active');
-                }
-            });
+        const data = {
+          labels: detailResults.flatMap((result) => result.detail),
+          datasets: [
+            {
+              label: "My Dataset",
+              data: detailResults.flatMap((result) => result.percentage),
+              backgroundColor: [
+                "red",
+                "red",
+                "red",
+                "blue",
+                "blue",
+                "blue",
+                "green",
+                "green",
+                "green",
+                "yellow",
+                "yellow",
+                "yellow",
+                "grey",
+                "grey",
+                "grey",
+                "orange",
+                "orange",
+                "orange"
+              ],
+            },
+          ],
+        };
 
-            renderResults();
+        const options = {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: "right",
+            },
+            tooltip: {
+              callbacks: {
+                label: function (context) {
+                  return `${context.label}: ${context.formattedValue}`;
+                },
+              },
+            },
+          },
+          scales: {
+            r: {
+              ticks: {
+                display: false,
+              },
+              pointLabels: {
+                centerPointLabels: true, // ✅ center labels inside slices
+                display: true,
+                font: {
+                  size: 14,
+                },
+              },
+            },
+          },
+        };
+
+        new Chart(document.getElementById("myChart"), {
+          type: "polarArea",
+          data,
+          options,
         });
+      }
+
+      // Mobile menu toggle
+      document.addEventListener("DOMContentLoaded", function () {
+        const sidebar = document.querySelector(".sidebar");
+        const toggleButton = document.createElement("button");
+        toggleButton.className = "sidebar-toggle";
+        toggleButton.innerHTML =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="menu-icon"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>';
+        document.body.appendChild(toggleButton);
+
+        toggleButton.addEventListener("click", function () {
+          sidebar.classList.toggle("active");
+        });
+
+        document.addEventListener("click", function (event) {
+          if (
+            !sidebar.contains(event.target) &&
+            !toggleButton.contains(event.target)
+          ) {
+            sidebar.classList.remove("active");
+          }
+        });
+
+        renderResults();
+        renderChart();
+      });
     </script>
-</body>
+  </body>
 </html>
