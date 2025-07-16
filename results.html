@@ -23,8 +23,8 @@
       }
 
       canvas {
-        width: 600px;
-        height: 600px;
+        width: 100%;
+        height: auto;
       }
 
       .app {
@@ -246,17 +246,6 @@
 
       <main class="main-content">
         <div class="results">
-          <div
-            style="
-              width: 100%;
-              height: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-            "
-          >
-            <canvas id="myChart"></canvas>
-          </div>
           <div class="content-frame" id="resultsContent">
             <!-- Content will be dynamically inserted here -->
           </div>
@@ -407,6 +396,18 @@
                     </div>
                 </div>
 
+                <div
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                  "
+                >
+                  <canvas style="width: 90%;" id="myChart"></canvas>
+                </div>
+
                 <div class="results-container">
                     ${results
                       .map(
@@ -435,13 +436,11 @@
         const answers = JSON.parse(urlParams.get("answers") || "[]");
         const detailResults = processDetailResults(answers);
 
-        console.log(detailResults.flatMap((result) => result.detail));
-
         const data = {
           labels: detailResults.flatMap((result) => result.detail),
           datasets: [
             {
-              label: "My Dataset",
+              label: "Kết quả",
               data: detailResults.flatMap((result) => result.percentage),
               backgroundColor: [
                 "red",
@@ -461,17 +460,17 @@
                 "grey",
                 "orange",
                 "orange",
-                "orange"
+                "orange",
               ],
             },
           ],
         };
 
         const options = {
-          responsive: true,
+          responsive: false,
           plugins: {
             legend: {
-              position: "right",
+              display: false,
             },
             tooltip: {
               callbacks: {
@@ -483,6 +482,8 @@
           },
           scales: {
             r: {
+              min: 0, // ✅ start grid at 0
+              max: 100, // ✅ end grid at 100
               ticks: {
                 display: false,
               },
@@ -492,6 +493,12 @@
                 font: {
                   size: 14,
                 },
+                color: "#ffffff",
+              },
+              grid: {
+                circular: true, // ✅ make grid lines circular (optional)
+                color: "white", // Optional: grid color
+                lineWidth: 1,
               },
             },
           },
