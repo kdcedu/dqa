@@ -532,11 +532,12 @@
       }
 
       function submitAnswer(level) {
-        selectedLevel = level;
         answers.push({
           questionId: questions[currentQuestion].id,
           level: parseFloat(level),
         });
+
+        selectedLevel = level;
 
         if (currentQuestion < questions.length - 1) {
           currentQuestion++;
@@ -595,7 +596,7 @@
               const ratingButtons =
                 target.parentNode.querySelectorAll(".rating-btn");
               ratingButtons.forEach((btn, index) => {
-                btn.classList.toggle("active", index < level);
+                btn.classList.toggle("active", index <= level);
               });
             }
           },
@@ -618,7 +619,7 @@
               const ratingButtons =
                 target.parentNode.querySelectorAll(".rating-btn");
               ratingButtons.forEach((btn, index) => {
-                btn.classList.toggle("active", index < level);
+                btn.classList.toggle("active", index <= level);
               });
             }
           },
